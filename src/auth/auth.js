@@ -8,6 +8,7 @@ passport.use('signup', new localStrategy({
     passwordField: 'password'
 }, async (email, password, done) => {
     try {
+        console.log('email', email, password);
         //Check if email already exists
         const userExists = await UserModel.findOne({ email });
         if (userExists) {

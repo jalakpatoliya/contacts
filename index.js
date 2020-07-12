@@ -13,6 +13,7 @@ require('./src/lib/mongoose');
  * importing models
  */
 require("./src/models/User");
+require("./src/models/Contact");
 
 // if (process.env.NODE_ENV === 'production') {
 //     app.use(express.static(path.join(__dirname, 'client/build')));

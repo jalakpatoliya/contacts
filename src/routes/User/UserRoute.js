@@ -1,8 +1,11 @@
 const express = require('express');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
-
 const router = express.Router();
+const bodyParser = require('body-parser');
+
+router.use(bodyParser.urlencoded({ extended: true }));
+router.use(bodyParser.json());
 
 //When the user sends a post request to this route, passport authenticates the user based on the
 //middleware created previously
