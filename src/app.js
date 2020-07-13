@@ -1,10 +1,12 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const passport = require('passport');
 const UserRoute = require('./routes/User/UserRoute');
 const ContactRoute = require('./routes/Contact/ContactRouter');
 require('./auth/auth');
 
+app.use(cors())
 /**
  * Routes
  */

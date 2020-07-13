@@ -11,6 +11,7 @@ router.use(bodyParser.json());
  */
 router.post('/create', async (req, res) => {
     try {
+
         const userId = req.user._id;
         const { _id: contactId } = await Contact.create({ ...req.body, creator: userId });
 
@@ -41,7 +42,7 @@ router.get('/all', async (req, res) => {
     }
 })
 
-/**
+/**mongoose.set('useCreateIndex', true);
  * Update Contact
  */
 router.put('/:id', async (req, res) => {
@@ -82,6 +83,18 @@ router.delete('/:id', async (req, res) => {
     }
 })
 
+/**
+ * View a contact
+ */
+router.get('/:id', async (req, res) => {
+    try {
+        const contactId = req.params.id;
+        const data = await Contact.findByIdAndUpdate({ _id: contactId }, { $inc: { views: 1 } }, { new: true })
 
+        return res.status(200).json({ status: 'success', data })
+    } catch (error) {
+        res.status(500).json({ status: 'fail', error: error.message })
+    }
+})
 
 module.exports = router;
