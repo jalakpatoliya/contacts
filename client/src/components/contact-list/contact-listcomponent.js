@@ -9,7 +9,7 @@ export const ContactList = () => {
         <div>
             {
                 contactList.map((props) =>
-                    <Contact key={props._id} {...props} />
+                    <Contact key={props._id} contactData={props} />
                 )
             }
         </div>

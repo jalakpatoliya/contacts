@@ -24,12 +24,13 @@ const SignIn = ({ history }) => {
         //signing in
         const { data: { token } } = await axios.post(`http://localhost:5000/login`, { email, password })
         setCurrentUser({ email, token })
-
+        console.log({ email, token });
         //set contacts of user
         const { data: { data } } = await axios.get(`http://localhost:5000/contact/all`, {
             headers: { Authorization: `Bearer ${token}` }
         })
         setContactList(data)
+        console.log(data);
 
 
         //moving to contacts page

@@ -50,7 +50,7 @@ router.put('/:id', async (req, res) => {
         const contactId = req.params.id;
 
         const data = await Contact.findByIdAndUpdate(
-            contactId, { ...req.body }
+            contactId, { ...req.body }, { new: true }
         );
 
         return res.status(200).json({ status: 'success', data })
