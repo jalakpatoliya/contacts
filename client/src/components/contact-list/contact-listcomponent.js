@@ -87,7 +87,7 @@ export function ContactList() {
 
     useEffect(() => {
         const fetchData = () => {
-            console.log('contactList:', contactList);
+            // console.log('contactList:', contactList);
         };
         fetchData()
     });

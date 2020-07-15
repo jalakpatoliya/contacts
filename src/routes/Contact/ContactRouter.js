@@ -2,6 +2,8 @@ const router = require('express').Router();
 const bodyParser = require('body-parser');
 const Contact = require('../../models/Contact');
 const User = require('../../models/User');
+const mongoose = require('mongoose');
+const moment = require('moment');
 
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
@@ -89,7 +91,50 @@ router.delete('/:id', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const contactId = req.params.id;
-        const data = await Contact.findByIdAndUpdate({ _id: contactId }, { $inc: { views: 1 } }, { new: true })
+        let data;
+        let today = new Date()
+            .toISOString()
+            .slice(0, 10)
+            .toString();
+        let weekAgoDate = moment().subtract(7, 'd').format('YYYY-MM-DD');
+        let tomorrow = moment().add(1, 'd').format('YYYY-MM-DD');
+        // increment todays contact views count
+        data = await Contact.findOneAndUpdate({
+            'views.date': today
+        }, {
+            '$inc': {
+                'views.$.count': 1,
+                totalViews: 1
+            },
+        }, { new: true })
+
+        // create todays contact views count
+        if (!data) {
+            data = await Contact.findByIdAndUpdate(contactId, { $push: { views: { date: today } }, $inc: { totalViews: 1 } }, { new: true })
+        }
+        // console.log(contactId);
+
+        const viewsForGraph = await Contact.aggregate([
+            { "$match": { _id: mongoose.Types.ObjectId(contactId) } },
+            {
+                "$project": {
+                    "views": {
+                        "$filter": {
+                            "input": '$views',
+                            "as": 'item',
+                            "cond": {
+                                "$and": [
+                                    { "$gt": ['$$item.date', new Date(weekAgoDate)] },
+                                    { "$lt": ['$$item.date', new Date(tomorrow)] }
+                                ]
+                            }
+                        }
+                    },
+                }
+            }
+        ])
+
+        data.views = viewsForGraph[0].views;
 
         return res.status(200).json({ status: 'success', data })
     } catch (error) {

@@ -34,7 +34,13 @@ const ContactSchema = new Schema({
     },
     landlineNumber: String,
     notes: String,
-    views: { type: Number, default: 0 }
+    views: [{
+        date: Date,
+        count: { type: Number, default: 1 }
+    }],
+    totalViews: {
+        type: Number, default: 0
+    }
 },
     { timestamps: true }
 );

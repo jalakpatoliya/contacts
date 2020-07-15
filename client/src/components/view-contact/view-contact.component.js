@@ -9,6 +9,7 @@ import { ContactListContext } from '../../contexts/contact-list.context';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import { EditContact } from '../edit-contact/edit-contact.component';
+import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -20,8 +21,24 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export function ViewContact({ setState, state, contactData, setContactData, open, setOpen }) {
-    const { firstName, lastName, middleName, email, mobileNumber, notes } = contactData;
+    const { firstName, lastName, middleName, email, mobileNumber, notes, views } = contactData;
     const classes = useStyles();
+
+    useEffect(() => {
+
+        const incrementViews = async () => {
+            const { data: { data } } = await axios.get(`http://localhost:5000/contact/${contactData._id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjVmMGIzYWM0MmNjMWRkMWY5Njc1NmI2ZSIsImVtYWlsIjoiamFsYWtAZ21haWwuY29tIn0sImlhdCI6MTU5NDY1MDI0OX0.XX34eLi0Wk3gzdNJxoEPi4esui5tBz81oIjoxcGlu24`
+                    },
+                })
+        }
+        if (open) {
+            incrementViews()
+            setContactData({ ...contactData, views: contactData.views + 1 })
+        }
+    }, [open])
 
     const [openEditContact, setOpenEditContact] = useState(false)
 
@@ -91,6 +108,13 @@ export function ViewContact({ setState, state, contactData, setContactData, open
                                 id="outlined-disabled"
                                 label="Notes"
                                 defaultValue={notes}
+                                variant="outlined"
+                            />
+                            <TextField
+                                disabled
+                                id="outlined-disabled"
+                                label="Views"
+                                defaultValue={views}
                                 variant="outlined"
                             />
                         </form>
