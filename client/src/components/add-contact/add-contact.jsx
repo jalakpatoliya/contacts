@@ -25,13 +25,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const AddContact = () => {
+const AddContact = ({ state, setState, open, setOpen }) => {
     const classes = useStyles();
 
     const [currentUser, setCurrentUser] = useContext(CurrentUserContext);
     const [contactList, setContactList] = useContext(ContactListContext);
 
-    const [open, setOpen] = React.useState(false);
+    // const [open, setOpen] = React.useState(false);
     const [mobileNumber, setmobileNumber] = useState('917405320323');
     const [contactDetails, setContactDetails] = useState({
         firstName: 'asdfasdfasdf',
@@ -68,17 +68,16 @@ const AddContact = () => {
         const { data: { data } } = await axios.get(`http://localhost:5000/contact/all`, {
             headers: { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjVmMGIzYWM0MmNjMWRkMWY5Njc1NmI2ZSIsImVtYWlsIjoiamFsYWtAZ21haWwuY29tIn0sImlhdCI6MTU5NDY1MDI0OX0.XX34eLi0Wk3gzdNJxoEPi4esui5tBz81oIjoxcGlu24` }
         })
-        setContactList(data)
+        await setContactList(data)
+
+        await setState({ ...state, data: [...data] })
+        console.log('state', state);
 
         //clear form
         setOpen(false)
     }
 
     return (<React.Fragment>
-        <Button variant="outlined" color="primary" onClick={() => setOpen(true)}>
-            Add New Contact
-        </Button>
-
         <Dialog open={open} onClose={() => setOpen(false)} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">Contact</DialogTitle>
             <DialogContent>

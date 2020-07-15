@@ -35,7 +35,9 @@ const ContactSchema = new Schema({
     landlineNumber: String,
     notes: String,
     views: { type: Number, default: 0 }
-});
+},
+    { timestamps: true }
+);
 
 
 const ContactModel = mongoose.model('Contact', ContactSchema);

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -19,11 +19,10 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export function EditContact({ contactData, open, setOpen }) {
+export function EditContact({ state, setState, contactData, setContactData, open, setOpen }) {
     const classes = useStyles();
 
-    const [contactDetails, setContactDetails] = useState({ ...contactData })
-    const { _id, firstName, lastName, middleName, mobileNumber, email, notes } = contactDetails;
+    const { _id, firstName, lastName, middleName, mobileNumber, email, notes } = contactData;
 
     const [contactList, setContactList] = useContext(ContactListContext);
 
@@ -37,12 +36,14 @@ export function EditContact({ contactData, open, setOpen }) {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setContactDetails({ ...contactDetails, [name]: value });
+        setContactData({ ...contactData, [name]: value });
     }
+
+
 
     const handleSubmit = async () => {
         //update contact
-        const bodyParameters = { ...contactDetails }
+        const bodyParameters = { ...contactData }
         const { data: { data } } = await axios.put(`http://localhost:5000/contact/${_id}`,
             bodyParameters,
             {
@@ -53,14 +54,18 @@ export function EditContact({ contactData, open, setOpen }) {
 
         //update contactList    
         const newContactList = contactList.filter(contact => contact._id !== _id)
-        setContactList([...newContactList, { ...data }])
+        console.log('newContactList', newContactList);
+        console.log('data', data);
+        await setContactList([...newContactList, { ...data }])
 
+        await setState({ ...state, data: [...newContactList, { ...data }] })
+        console.log('state', state);
         handleClose();
     }
 
     const handleCancel = async () => {
         //remove changes
-        setContactDetails({ ...contactData })
+        // setContactData({ ...contactData })
 
         handleClose()
     }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export function ViewContact({ contactData, open, setOpen }) {
+export function ViewContact({ setState, state, contactData, setContactData, open, setOpen }) {
     const { firstName, lastName, middleName, email, mobileNumber, notes } = contactData;
     const classes = useStyles();
 
@@ -37,6 +37,12 @@ export function ViewContact({ contactData, open, setOpen }) {
         setOpenEditContact(true)
         setOpen(false)
     }
+
+    useEffect(() => {
+        const fetchData = () => {
+        };
+        fetchData()
+    });
 
     return (
         <div>
@@ -95,11 +101,10 @@ export function ViewContact({ contactData, open, setOpen }) {
                     <Button onClick={handleEdit} color="primary">
                         Edit
                     </Button>
-
                 </DialogActions>
             </Dialog>
 
-            <EditContact contactData={contactData} open={openEditContact} setOpen={setOpenEditContact} />
+            <EditContact setState={setState} state={state} contactData={contactData} setContactData={setContactData} open={openEditContact} setOpen={setOpenEditContact} />
 
         </div>
     );
