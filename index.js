@@ -15,17 +15,4 @@ require('./src/lib/mongoose');
 require("./src/models/User");
 require("./src/models/Contact");
 
-// if (process.env.NODE_ENV === 'production') {
-//     app.use(express.static(path.join(__dirname, 'client/build')));
-
-//     app.get('*', (req, res) => {
-//         res.sendFile(path.join(__dirname, 'client/build', 'index.html'))
-//     })
-// }
-
-// app.get('/service-worker.js', (req, res) => {
-//     res.sendFile(path.resolve(__dirname, '..', 'build', 'service-worker.js'))
-// })
-
-
 http.createServer(app).listen(PORT, console.log(`server started at port:${PORT}`));
