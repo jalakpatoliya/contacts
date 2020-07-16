@@ -39,7 +39,7 @@ const SignUp = ({ history }) => {
 
         try {
             //signUp
-            await axios.post(`http://localhost:5000/signup`, { email, password })
+            await axios.post(`api/signup`, { email, password })
 
             alert('SignUp successfull, pls login')
 

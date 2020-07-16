@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -17,6 +17,7 @@ import {
     Tooltip, CartesianGrid,
     Label
 } from 'recharts';
+import { CurrentUserContext } from "../../contexts/current-user.context";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -34,20 +35,26 @@ export function ViewContact({ setState, state, contactData, setContactData, open
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('xl'));
 
+    const [currentUser, setCurrentUser] = useContext(CurrentUserContext)
+
     useEffect(() => {
-        const incrementViews = async () => {
-            const { data: { data } } = await axios.get(`http://localhost:5000/contact/${contactData._id}`,
-                {
-                    headers: {
-                        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjVmMGIzYWM0MmNjMWRkMWY5Njc1NmI2ZSIsImVtYWlsIjoiamFsYWtAZ21haWwuY29tIn0sImlhdCI6MTU5NDY1MDI0OX0.XX34eLi0Wk3gzdNJxoEPi4esui5tBz81oIjoxcGlu24`
-                    },
-                })
-            totalViews += 1;
-            await setContactData({ ...contactData, ...data })
-        }
-        if (open) {
-            incrementViews()
-            setContactData({ ...contactData, totalViews: contactData.totalViews + 1 })
+        try {
+            const incrementViews = async () => {
+                const { data: { data } } = await axios.get(`api/contact/${contactData._id}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${currentUser.token}`
+                        },
+                    })
+                totalViews += 1;
+                await setContactData({ ...contactData, ...data })
+            }
+            if (open) {
+                incrementViews()
+                setContactData({ ...contactData, totalViews: contactData.totalViews + 1 })
+            }
+        } catch (error) {
+            alert(error.message)
         }
     }, [open])
 

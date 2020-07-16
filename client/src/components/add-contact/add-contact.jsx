@@ -56,14 +56,14 @@ const AddContact = ({ state, setState, open, setOpen }) => {
             const bodyParameters = { firstName, lastName, middleName, email, notes, mobileNumber }
 
             //add contact
-            await axios.post(`http://localhost:5000/contact/create`,
+            await axios.post(`api/contact/create`,
                 bodyParameters,
                 {
                     headers: { Authorization: `Bearer ${currentUser.token}` },
                 })
 
             //update contactList
-            const { data: { data } } = await axios.get(`http://localhost:5000/contact/all`, {
+            const { data: { data } } = await axios.get(`api/contact/all`, {
                 headers: { Authorization: `Bearer ${currentUser.token}` }
             })
             await setContactList(data)

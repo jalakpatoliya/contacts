@@ -10,9 +10,9 @@ app.use(cors())
 /**
  * Routes
  */
-app.use('/', UserRoute);
+app.use('/api/', UserRoute);
 //We plugin our jwt strategy as a middleware so only verified users can access this route
-app.use('/contact', passport.authenticate('jwt', { session: false }), ContactRoute);
+app.use('/api/contact', passport.authenticate('jwt', { session: false }), ContactRoute);
 
 //Handle errors
 // eslint-disable-next-line no-unused-vars

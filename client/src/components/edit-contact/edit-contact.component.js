@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState, useContext, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -7,8 +8,11 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { makeStyles } from '@material-ui/core/styles';
-import axios from "axios";
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/material.css'
+
 import { ContactListContext } from '../../contexts/contact-list.context';
+import { CurrentUserContext } from "../../contexts/current-user.context";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -25,6 +29,7 @@ export function EditContact({ state, setState, contactData, setContactData, open
     const { _id, firstName, lastName, middleName, mobileNumber, email, notes } = contactData;
 
     const [contactList, setContactList] = useContext(ContactListContext);
+    const [currentUser, setCurrentUser] = useContext(CurrentUserContext)
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -39,28 +44,28 @@ export function EditContact({ state, setState, contactData, setContactData, open
         setContactData({ ...contactData, [name]: value });
     }
 
-
-
     const handleSubmit = async () => {
-        //update contact
-        const bodyParameters = { ...contactData }
-        const { data: { data } } = await axios.put(`http://localhost:5000/contact/${_id}`,
-            bodyParameters,
-            {
-                headers: {
-                    Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjVmMGIzYWM0MmNjMWRkMWY5Njc1NmI2ZSIsImVtYWlsIjoiamFsYWtAZ21haWwuY29tIn0sImlhdCI6MTU5NDY1MDI0OX0.XX34eLi0Wk3gzdNJxoEPi4esui5tBz81oIjoxcGlu24`
-                },
-            })
+        try {
 
-        //update contactList    
-        const newContactList = contactList.filter(contact => contact._id !== _id)
-        console.log('newContactList', newContactList);
-        console.log('data', data);
-        await setContactList([...newContactList, { ...data }])
+            //update contact
+            const bodyParameters = { ...contactData }
+            const { data: { data } } = await axios.put(`api/contact/${_id}`,
+                bodyParameters,
+                {
+                    headers: {
+                        Authorization: `Bearer ${currentUser.token}`
+                    },
+                })
 
-        await setState({ ...state, data: [...newContactList, { ...data }] })
-        console.log('state', state);
-        handleClose();
+            //update contactList    
+            const newContactList = contactList.filter(contact => contact._id !== _id)
+            await setContactList([...newContactList, { ...data }])
+
+            await setState({ ...state, data: [...newContactList, { ...data }] })
+            handleClose();
+        } catch (error) {
+            alert(error.message)
+        }
     }
 
     const handleCancel = async () => {
@@ -103,14 +108,6 @@ export function EditContact({ state, setState, contactData, setContactData, open
                         />
                         <TextField
                             id="outlined-disabled"
-                            name="mobileNumber"
-                            label="Mobile Number"
-                            value={mobileNumber}
-                            variant="outlined"
-                            onChange={handleChange}
-                        />
-                        <TextField
-                            id="outlined-disabled"
                             name="email"
                             label="Email"
                             value={email}
@@ -124,6 +121,13 @@ export function EditContact({ state, setState, contactData, setContactData, open
                             value={notes}
                             variant="outlined"
                             onChange={handleChange}
+                        />
+                        <PhoneInput
+                            name="mobileNumber"
+                            value={mobileNumber}
+                            onChange={handleChange}
+                            // country={'in'}
+                            required
                         />
                     </form>
                 </DialogContent>

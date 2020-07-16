@@ -39,17 +39,15 @@ const SignIn = ({ history }) => {
         try {
 
             //signing in
-            const { data: { token } } = await axios.post(`http://localhost:5000/login`, { email, password })
+            const { data: { token } } = await axios.post(`api/login`, { email, password })
             setCurrentUser({ email, token })
             localStorage.setItem('user', JSON.stringify({ email, token }))
-            console.log({ email, token });
+
             //set contacts of user
-            const { data: { data } } = await axios.get(`http://localhost:5000/contact/all`, {
+            const { data: { data } } = await axios.get(`api/contact/all`, {
                 headers: { Authorization: `Bearer ${token}` }
             })
-            console.log('afterlogin', data);
             setContactList(data)
-            console.log(data);
 
 
             //moving to contacts page

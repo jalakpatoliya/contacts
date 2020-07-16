@@ -10,29 +10,34 @@ const HomePage = ({ history }) => {
     const [contactList, setContactList] = useContext(ContactListContext)
 
     useEffect(() => {
-        // if user exist in local storage retrieve it
-        const getUserFromLocalStorage = async () => {
-            let user = localStorage.getItem('user');
-            if (user) {
-                user = JSON.parse(user);
+        try {
 
-                //set current user in context
-                setCurrentUser(user)
+            // if user exist in local storage retrieve it
+            const getUserFromLocalStorage = async () => {
+                let user = localStorage.getItem('user');
+                if (user) {
+                    user = JSON.parse(user);
+
+                    //set current user in context
+                    setCurrentUser(user)
 
 
-                //set contactList
-                const { data: { data } } = await axios.get(`http://localhost:5000/contact/all`, {
-                    headers: { Authorization: `Bearer ${user.token}` }
-                })
-                setContactList(data)
+                    //set contactList
+                    const { data: { data } } = await axios.get(`api/contact/all`, {
+                        headers: { Authorization: `Bearer ${user.token}` }
+                    })
+                    setContactList(data)
 
-                history.push('/contacts')
-            } else {
+                    history.push('/contacts')
+                } else {
 
-                history.push('/login')
-            }
-        };
-        getUserFromLocalStorage()
+                    history.push('/login')
+                }
+            };
+            getUserFromLocalStorage()
+        } catch (error) {
+            alert(error.message)
+        }
     }, []);
 
     return (

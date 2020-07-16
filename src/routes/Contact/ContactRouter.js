@@ -35,6 +35,7 @@ router.post('/create', async (req, res) => {
  */
 router.get('/all', async (req, res) => {
     try {
+
         const userId = req.user._id;
         const data = await Contact.find({ creator: userId })
 
@@ -50,6 +51,13 @@ router.get('/all', async (req, res) => {
 router.put('/:id', async (req, res) => {
     try {
         const contactId = req.params.id;
+        const email = req.body.email;
+
+        if (email) {
+            if (!isMailIdValid(email)) {
+                throw new Error('Incorrect Mail ID')
+            }
+        }
 
         const data = await Contact.findByIdAndUpdate(
             contactId, { ...req.body }, { new: true }
@@ -141,5 +149,11 @@ router.get('/:id', async (req, res) => {
         res.status(500).json({ status: 'fail', error: error.message })
     }
 })
+
+
+function isMailIdValid(email) {
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
 
 module.exports = router;
