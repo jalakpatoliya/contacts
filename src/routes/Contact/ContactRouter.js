@@ -120,7 +120,6 @@ router.get('/:id', async (req, res) => {
         if (!data) {
             data = await Contact.findByIdAndUpdate(contactId, { $push: { views: { date: today } }, $inc: { totalViews: 1 } }, { new: true })
         }
-        // console.log(contactId);
 
         const viewsForGraph = await Contact.aggregate([
             { "$match": { _id: mongoose.Types.ObjectId(contactId) } },

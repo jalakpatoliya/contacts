@@ -83,7 +83,6 @@ function ContactList({ history }) {
                     const { data: { data } } = await axios.get(`api/contact/all`, {
                         headers: { Authorization: `Bearer ${user.token}` }
                     })
-                    console.log('fromUserList:', data);
                     setContactList(data)
                     setState({ ...state, data: [...data] })
                 } else {
