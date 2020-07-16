@@ -24,7 +24,7 @@ router.post('/create', async (req, res) => {
         );
         // const data2 = await User.findById(userId);
 
-        return res.status(200).json({ status: 'success', data })
+        return res.status(200).json({ status: 'success', userId })
     } catch (error) {
         res.status(500).json({ status: 'fail', error: error.message })
     }

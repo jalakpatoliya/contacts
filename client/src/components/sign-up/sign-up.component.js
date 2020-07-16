@@ -1,5 +1,5 @@
+import React, { useContext, useState, useEffect } from 'react'
 import axios from 'axios';
-import React, { useContext, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const SignIn = ({ history }) => {
+const SignUp = ({ history }) => {
     const classes = useStyles();
     const [currentUser, setCurrentUser] = useContext(CurrentUserContext)
     const [contactList, setContactList] = useContext(ContactListContext)
@@ -36,25 +36,15 @@ const SignIn = ({ history }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         try {
+            //signUp
+            await axios.post(`http://localhost:5000/signup`, { email, password })
 
-            //signing in
-            const { data: { token } } = await axios.post(`http://localhost:5000/login`, { email, password })
-            setCurrentUser({ email, token })
-            localStorage.setItem('user', JSON.stringify({ email, token }))
-            console.log({ email, token });
-            //set contacts of user
-            const { data: { data } } = await axios.get(`http://localhost:5000/contact/all`, {
-                headers: { Authorization: `Bearer ${token}` }
-            })
-            console.log('afterlogin', data);
-            setContactList(data)
-            console.log(data);
+            alert('SignUp successfull, pls login')
 
-
-            //moving to contacts page
-            history.push('/contacts')
-
+            //moving to login page
+            history.push('/login')
         } catch (error) {
             alert(error.message)
         }
@@ -63,7 +53,6 @@ const SignIn = ({ history }) => {
     return (
         <div>
             <Header />
-
             <Grid
                 container
                 spacing={10}
@@ -79,17 +68,16 @@ const SignIn = ({ history }) => {
                     <br />
                     <br />
                     <form onSubmit={handleSubmit} className={classes.root} noValidate autoComplete="off">
-                        <TextField required type="email" onChange={updateEmail} value={email} id="outlined-basic" placeholder='email' variant="outlined" />
+                        <TextField type='email' onChange={updateEmail} value={email} id="outlined-basic" placeholder='email' variant="outlined" />
                         <br />
-                        <TextField required type="password" onChange={updatePassword} value={password} id="outlined-basic" placeholder='password' variant="outlined" />
-                        <Button size='large' type='submit' variant="contained" style={{ color: 'white', backgroundColor: '#469ac6', padding: '15px 95px' }} disableElevation>SignIn</Button>
+                        <TextField type="password" onChange={updatePassword} value={password} id="outlined-basic" placeholder='password' variant="outlined" />
+                        <Button size='large' type='submit' variant="contained" style={{ color: 'white', backgroundColor: '#469ac6', padding: '15px 95px' }} disableElevation>SignUp</Button>
                     </form>
                 </Paper>
             </Grid>
-
         </div>
     )
 }
 
 
-export default withRouter(SignIn);
+export default withRouter(SignUp);

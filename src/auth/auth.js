@@ -12,13 +12,14 @@ passport.use('signup', new localStrategy({
         //Check if email already exists
         const userExists = await UserModel.findOne({ email });
         if (userExists) {
-            console.log(userExists);
+            console.log('inside userExists', userExists);
             //If the user isn't found in the database, return a message
             return done({ message: 'Email id already exists' }, false);
         }
-
+        console.log('after userExists');
         //Save the information provided by the user to the the database
         const user = await UserModel.create({ email, password });
+        console.log('after createUser', user);
         //Send the user information to the next middleware
         return done(null, user);
     } catch (error) {

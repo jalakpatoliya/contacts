@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -9,7 +10,14 @@ import { ContactListContext } from '../../contexts/contact-list.context';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import { EditContact } from '../edit-contact/edit-contact.component';
-import axios from "axios";
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { useTheme } from '@material-ui/core/styles';
+import {
+    LineChart, XAxis, YAxis, Line, Brush, AreaChart, Area,
+    Tooltip, CartesianGrid,
+    Label
+} from 'recharts';
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -21,11 +29,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export function ViewContact({ setState, state, contactData, setContactData, open, setOpen }) {
-    const { firstName, lastName, middleName, email, mobileNumber, notes, views } = contactData;
+    let { firstName, lastName, middleName, email, mobileNumber, notes, totalViews, views } = contactData;
     const classes = useStyles();
+    const theme = useTheme();
+    const fullScreen = useMediaQuery(theme.breakpoints.down('xl'));
 
     useEffect(() => {
-
         const incrementViews = async () => {
             const { data: { data } } = await axios.get(`http://localhost:5000/contact/${contactData._id}`,
                 {
@@ -33,10 +42,12 @@ export function ViewContact({ setState, state, contactData, setContactData, open
                         Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjVmMGIzYWM0MmNjMWRkMWY5Njc1NmI2ZSIsImVtYWlsIjoiamFsYWtAZ21haWwuY29tIn0sImlhdCI6MTU5NDY1MDI0OX0.XX34eLi0Wk3gzdNJxoEPi4esui5tBz81oIjoxcGlu24`
                     },
                 })
+            totalViews += 1;
+            await setContactData({ ...contactData, ...data })
         }
         if (open) {
             incrementViews()
-            setContactData({ ...contactData, views: contactData.views + 1 })
+            setContactData({ ...contactData, totalViews: contactData.totalViews + 1 })
         }
     }, [open])
 
@@ -63,7 +74,7 @@ export function ViewContact({ setState, state, contactData, setContactData, open
 
     return (
         <div>
-            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+            <Dialog fullWidth={true} maxWidth={'md'} open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
                 <DialogTitle id="form-dialog-title">Contact Details</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
@@ -114,12 +125,29 @@ export function ViewContact({ setState, state, contactData, setContactData, open
                                 disabled
                                 id="outlined-disabled"
                                 label="Views"
-                                defaultValue={views}
+                                defaultValue={totalViews}
                                 variant="outlined"
                             />
                         </form>
                     </DialogContentText>
 
+                    <LineChart
+                        width={800} height={200} data={views}
+                        margin={{ top: 40, right: 40, bottom: 20, left: 20 }}
+                    >
+                        <CartesianGrid vertical={false} />
+                        <XAxis dataKey="date" />
+                        <YAxis domain={['auto', 'auto']} label="Views" />
+                        <Tooltip
+                            wrapperStyle={{
+                                borderColor: 'white',
+                                boxShadow: '2px 2px 3px 0px rgb(204, 204, 204)',
+                            }}
+                            contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.8)' }}
+                            labelStyle={{ fontWeight: 'bold', color: '#666666' }}
+                        />
+                        <Line dataKey="count" stroke="#ff7300" dot={false} />
+                    </LineChart>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleEdit} color="primary">
@@ -129,7 +157,6 @@ export function ViewContact({ setState, state, contactData, setContactData, open
             </Dialog>
 
             <EditContact setState={setState} state={state} contactData={contactData} setContactData={setContactData} open={openEditContact} setOpen={setOpenEditContact} />
-
         </div>
     );
 }

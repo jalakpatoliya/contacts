@@ -15,7 +15,10 @@
     "react-phone-input-2": "^2.13.7",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
-    "s": "^1.0.0"
+    "react-vis": "^1.11.7",
+    "recharts": "^1.8.5",
+    "s": "^1.0.0",
+    "semantic-ui-react": "^0.88.2"
   },
   "scripts": {
     "start": "react-scripts start",

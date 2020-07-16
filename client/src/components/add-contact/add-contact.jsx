@@ -32,13 +32,13 @@ const AddContact = ({ state, setState, open, setOpen }) => {
     const [contactList, setContactList] = useContext(ContactListContext);
 
     // const [open, setOpen] = React.useState(false);
-    const [mobileNumber, setmobileNumber] = useState('917405320323');
+    const [mobileNumber, setmobileNumber] = useState('');
     const [contactDetails, setContactDetails] = useState({
-        firstName: 'asdfasdfasdf',
-        lastName: 'asdfsadfsdf',
-        middleName: 'sadfasdf',
-        email: 'jalak@gmail.com',
-        notes: 'asdfdfsa',
+        firstName: '',
+        lastName: '',
+        middleName: '',
+        email: '',
+        notes: '',
     })
     const { firstName, lastName, middleName, email, notes } = contactDetails;
 
@@ -50,31 +50,38 @@ const AddContact = ({ state, setState, open, setOpen }) => {
 
     const handleSubmit = async event => {
         event.preventDefault();
+        try {
 
-        const bodyParameters = { firstName, lastName, middleName, email, notes, mobileNumber }
-        console.log(currentUser);
 
-        //add contact
-        await axios.post(`http://localhost:5000/contact/create`,
-            bodyParameters,
-            {
-                // headers: { Authorization: `Bearer ${currentUser.token}` },
-                headers: {
-                    Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjVmMGIzYWM0MmNjMWRkMWY5Njc1NmI2ZSIsImVtYWlsIjoiamFsYWtAZ21haWwuY29tIn0sImlhdCI6MTU5NDY1MDI0OX0.XX34eLi0Wk3gzdNJxoEPi4esui5tBz81oIjoxcGlu24`
-                },
+            const bodyParameters = { firstName, lastName, middleName, email, notes, mobileNumber }
+
+            //add contact
+            await axios.post(`http://localhost:5000/contact/create`,
+                bodyParameters,
+                {
+                    headers: { Authorization: `Bearer ${currentUser.token}` },
+                })
+
+            //update contactList
+            const { data: { data } } = await axios.get(`http://localhost:5000/contact/all`, {
+                headers: { Authorization: `Bearer ${currentUser.token}` }
             })
+            await setContactList(data)
 
-        //update contactList
-        const { data: { data } } = await axios.get(`http://localhost:5000/contact/all`, {
-            headers: { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjVmMGIzYWM0MmNjMWRkMWY5Njc1NmI2ZSIsImVtYWlsIjoiamFsYWtAZ21haWwuY29tIn0sImlhdCI6MTU5NDY1MDI0OX0.XX34eLi0Wk3gzdNJxoEPi4esui5tBz81oIjoxcGlu24` }
-        })
-        await setContactList(data)
+            await setState({ ...state, data: [...data] })
 
-        await setState({ ...state, data: [...data] })
-        console.log('state', state);
-
-        //clear form
-        setOpen(false)
+            //clear form
+            setContactDetails({
+                firstName: '',
+                lastName: '',
+                middleName: '',
+                email: '',
+                notes: '',
+            })
+            setOpen(false)
+        } catch (error) {
+            alert(error.message)
+        }
     }
 
     return (<React.Fragment>
