@@ -30,12 +30,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export function ViewContact({ setState, state, contactData, setContactData, open, setOpen }) {
-    let { firstName, lastName, middleName, email, mobileNumber, notes, totalViews, views } = contactData;
+
     const classes = useStyles();
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('xl'));
 
     const [currentUser, setCurrentUser] = useContext(CurrentUserContext)
+
+    let { firstName, lastName, middleName, email, mobileNumber, notes, totalViews, views } = contactData;
 
     useEffect(() => {
         try {
@@ -46,17 +48,16 @@ export function ViewContact({ setState, state, contactData, setContactData, open
                             Authorization: `Bearer ${currentUser.token}`
                         },
                     })
-                totalViews += 1;
                 await setContactData({ ...contactData, ...data })
             }
             if (open) {
                 incrementViews()
-                setContactData({ ...contactData, totalViews: contactData.totalViews + 1 })
             }
         } catch (error) {
             alert(error.message)
         }
     }, [open])
+
 
     const [openEditContact, setOpenEditContact] = useState(false)
 
@@ -132,7 +133,8 @@ export function ViewContact({ setState, state, contactData, setContactData, open
                                 disabled
                                 id="outlined-disabled"
                                 label="Views"
-                                defaultValue={totalViews}
+                                value={totalViews}
+                                // defaultValue={totalViews}
                                 variant="outlined"
                             />
                         </form>
