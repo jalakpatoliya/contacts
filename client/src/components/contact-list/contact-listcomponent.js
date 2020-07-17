@@ -60,6 +60,10 @@ function ContactList({ history }) {
                 title: 'Date Added',
                 field: 'createdAt',
             },
+            {
+                title: 'Last Edit',
+                field: 'updatedAt',
+            },
         ],
         data: contactList
     });
