@@ -108,7 +108,8 @@ router.get('/:id', async (req, res) => {
         let tomorrow = moment().add(1, 'd').format('YYYY-MM-DD');
         // increment todays contact views count
         data = await Contact.findOneAndUpdate({
-            'views.date': today
+            _id: contactId,
+            'views.date': today,
         }, {
             '$inc': {
                 'views.$.count': 1,
@@ -116,7 +117,7 @@ router.get('/:id', async (req, res) => {
             },
         }, { new: true })
 
-        // create todays contact views count
+        // // create todays contact views count
         if (!data) {
             data = await Contact.findByIdAndUpdate(contactId, { $push: { views: { date: today } }, $inc: { totalViews: 1 } }, { new: true })
         }
