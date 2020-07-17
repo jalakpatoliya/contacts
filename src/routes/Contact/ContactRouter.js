@@ -24,7 +24,7 @@ router.post('/create', async (req, res) => {
         );
         // const data2 = await User.findById(userId);
 
-        return res.status(200).json({ status: 'success', userId })
+        return res.status(200).json({ status: 'success', data })
     } catch (error) {
         res.status(500).json({ status: 'fail', error: error.message })
     }
@@ -132,8 +132,8 @@ router.get('/:id', async (req, res) => {
                             "as": 'item',
                             "cond": {
                                 "$and": [
-                                    { "$gt": ['$$item.date', new Date(weekAgoDate)] },
-                                    { "$lt": ['$$item.date', new Date(tomorrow)] }
+                                    { "$lt": ['$$item.date', new Date(tomorrow)] },
+                                    { "$gt": ['$$item.date', new Date(weekAgoDate)] }
                                 ]
                             }
                         }
@@ -141,6 +141,12 @@ router.get('/:id', async (req, res) => {
                 }
             }
         ])
+
+        viewsForGraph[0].views.sort(function compare(a, b) {
+            var dateA = new Date(a.date);
+            var dateB = new Date(b.date);
+            return dateA - dateB;
+        });
 
         data.views = viewsForGraph[0].views;
 
